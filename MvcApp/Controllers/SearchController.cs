@@ -14,8 +14,9 @@ namespace MvcApp.Controllers
             return View();
         }
 
-
-
+        https://msdn.microsoft.com/en-us/magazine/dd419663.aspx?tduid=(85cd6a29db21a2b98f6cea1effa2f1fa)(256380)(2459594)(TnL5HPStwNw-Ain82ukW2sP_XtlgT9b5JA)()#id0090009
+        http://martinfowler.com/eaaDev/uiArchs.html
+        http://stackoverflow.com/questions/667781/what-is-the-difference-between-mvc-and-mvvm
 
         public async Task<ActionResult> CreateIndexer()
         {
