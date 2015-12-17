@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 
 namespace MvcApp.App_Start
 {
+    /// <summary>
+    /// https://azure.microsoft.com/en-us/documentation/articles/search-howto-indexing-azure-blob-storage/#supported-document-formats
+    /// </summary>
     public class AzureSearchHelper
     {
         #region Properties & Fields
@@ -77,6 +80,33 @@ namespace MvcApp.App_Start
 
         #endregion
 
+        #region Update Data Source
+
+        /// <summary>
+        /// Creates the data source.
+        /// </summary>
+        /// <param name="requestBody">The request body.</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> UpdateDataSource(string dataSource, dynamic requestBody)
+        {
+            var uri = new Uri(string.Format("https://{0}.search.windows.net/datasources/{1}?api-version=2015-02-28-Preview", mSearchServiceName, dataSource));
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
+
+            if (requestBody != null)
+            {
+                request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            }
+            //mClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Add("api-key", mApiKey);
+
+            HttpResponseMessage response = await mClient.SendAsync(request);
+            //dynamic body = await response.Content.ReadAsAsync<object>();
+
+            return response.StatusCode;
+        }
+
+        #endregion
+
         #region Create an indexer
 
         /// <summary>
@@ -110,15 +140,37 @@ namespace MvcApp.App_Start
         /// </summary>
         /// <param name="requestBody">The request body.</param>
         /// <returns></returns>
-        public async Task<HttpStatusCode> UpdateIndexer(dynamic requestBody)
+        public async Task<HttpStatusCode> UpdateIndexer(string indexer, dynamic requestBody)
         {
-            var uri = new Uri(string.Format("https://{0}.search.windows.net/indexers?api-version=2015-02-28-Preview", mSearchServiceName));
+            var uri = new Uri(string.Format("https://{0}.search.windows.net/indexers/{1}?api-version=2015-02-28-Preview", mSearchServiceName, indexer));
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
 
             if (requestBody != null)
             {
                 request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             }
+            request.Headers.Add("api-key", mApiKey);
+
+            HttpResponseMessage response = await mClient.SendAsync(request);
+            //dynamic body = await response.Content.ReadAsAsync<object>();
+
+            return response.StatusCode;
+        }
+
+        #endregion
+
+        #region Create an indexer
+
+        /// <summary>
+        /// Creates the indexer.
+        /// </summary>
+        /// <param name="requestBody">The request body.</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> RunIndexer(string indexer)
+        {
+            var uri = new Uri(string.Format("https://{0}.search.windows.net/indexers/{1}/run?api-version=2015-02-28-Preview", mSearchServiceName, indexer));
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
+
             request.Headers.Add("api-key", mApiKey);
 
             HttpResponseMessage response = await mClient.SendAsync(request);
@@ -174,5 +226,32 @@ namespace MvcApp.App_Start
         }
 
         #endregion
+
+        #region Create an indexer
+
+        /// <summary>
+        /// Creates the indexer.
+        /// </summary>
+        /// <param name="requestBody">The request body.</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> DeleteDocuments(string index, dynamic requestBody)
+        {
+            var uri = new Uri(string.Format("https://{0}.search.windows.net/indexes/{1}/docs/index?api-version=2015-02-28-Preview", mSearchServiceName, index));
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            if (requestBody != null)
+            {
+                request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            }
+            request.Headers.Add("api-key", mApiKey);
+
+            HttpResponseMessage response = await mClient.SendAsync(request);
+            //dynamic body = await response.Content.ReadAsAsync<object>();
+
+            return response.StatusCode;
+        }
+
+        #endregion
+
     }
 }

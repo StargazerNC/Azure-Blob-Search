@@ -17,9 +17,8 @@ namespace MvcApp.App_Start
     {
         #region Properties & Fields
 
-        private readonly CloudStorageAccount mStorageAccount = null;
-
-        private readonly CloudBlobClient mBlobClient = null;
+        private CloudStorageAccount mStorageAccount = null;
+        private CloudBlobClient mBlobClient = null;
 
         #endregion
 
