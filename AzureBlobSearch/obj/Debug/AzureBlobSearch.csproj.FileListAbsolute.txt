@@ -9,3 +9,12 @@ C:\Users\adm.LAPPT031\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\obj\Deb
 C:\Users\adm.LAPPT031\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\obj\Debug\AzureBlobSearch.pdb
 C:\Users\adm.LAPPT031\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\System.Net.Http.Formatting.dll
 C:\Users\adm.LAPPT031\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\System.Net.Http.Formatting.xml
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\obj\Debug\AzureBlobSearch.exe
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\obj\Debug\AzureBlobSearch.pdb
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\AzureBlobSearch.exe
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\AzureBlobSearch.pdb
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\Newtonsoft.Json.dll
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\System.Net.Http.Formatting.dll
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\Newtonsoft.Json.xml
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\bin\Debug\System.Net.Http.Formatting.xml
+D:\NC\OneDrive\Documents\GitHub\Azure-Blob-Search\AzureBlobSearch\obj\Debug\AzureBlobSearch.csprojResolveAssemblyReference.cache

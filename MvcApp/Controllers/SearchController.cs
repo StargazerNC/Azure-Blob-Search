@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using MvcApp.App_Start;
 
@@ -14,13 +15,25 @@ namespace MvcApp.Controllers
             return View();
         }
 
-        https://msdn.microsoft.com/en-us/magazine/dd419663.aspx?tduid=(85cd6a29db21a2b98f6cea1effa2f1fa)(256380)(2459594)(TnL5HPStwNw-Ain82ukW2sP_XtlgT9b5JA)()#id0090009
-        http://martinfowler.com/eaaDev/uiArchs.html
-        http://stackoverflow.com/questions/667781/what-is-the-difference-between-mvc-and-mvvm
-
         public async Task<ActionResult> CreateIndexer()
         {
-            return View();
+            var requestBody = new
+            {
+                name = "test-indexer",
+                description = "Test indexer",
+                dataSourceName = "blob-test-ds",
+                targetIndexName = "test-index",
+                schedule = new { interval = "PT1H", startTime = "2015-01-01T00:00:00Z" },
+                parameters = new { maxFailedItems = 10, maxFailedItemsPerBatch = 5, base64EncodeKeys = true },
+                fieldMappings = new [] {
+                                        //new { sourceFieldName = "metadata_storage_name", targetFieldName = "id" },
+                                        new { sourceFieldName =  "metadata_title", targetFieldName =  "title" }
+                                        }
+            };
+
+            AzureSearchHelper helper = new AzureSearchHelper();
+            var resp = await helper.CreateIndexer(requestBody);
+            return View("../Home/Index", resp);
         }
 
         public async Task<ActionResult> UpdateIndexer()
@@ -33,25 +46,28 @@ namespace MvcApp.Controllers
             return View();
         }
 
-
-
-
-
         public async Task<ActionResult> GetAll()
         {
             AzureSearchHelper helper = new AzureSearchHelper();
-            var resp = await helper.SearchDocuments(null);
+            var resp = await helper.SearchDocuments('*');
             return View("../Home/Index", resp);
         }
 
-        public async Task<ActionResult> Get(object id)
+        public async Task<ActionResult> Get()
         {
-            return View();
+            AzureSearchHelper helper = new AzureSearchHelper();
+
+            var id = "aAB0AHQAcABzADoALwAvAG4AYwBvAGkAbQBiAHIAYQAuAGIAbABvAGIALgBjAG8AcgBlAC4AdwBpAG4AZABvAHcAcwAuAG4AZQB0AC8AYwBvAGkAcwBvAC8AUgBlAGEAZABtAGUALgBkAG8AYwA1";
+
+            var resp = await helper.GetByAzureId(id);
+            return View("../Home/Index", resp.Content);
         }
 
-        public async Task<ActionResult> Search(dynamic requestBody)
+        public async Task<ActionResult> Search(string searchTerms = null)
         {
-            return View();
+            AzureSearchHelper helper = new AzureSearchHelper();
+            var resp = await helper.SearchDocuments(searchTerms);
+            return View("../Home/Index", resp);
         }
     }
 }
