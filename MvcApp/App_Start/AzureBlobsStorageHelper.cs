@@ -4,6 +4,8 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace MvcApp.App_Start
 {
@@ -11,13 +13,13 @@ namespace MvcApp.App_Start
     /// Implements an Azure Storage (BLOBs) helper to deal with read/write operations on Azure Storage Blobs
     /// <see cref="https://azure.microsoft.com/en-us/documentation/articles/storage-dotnet-how-to-use-blobs/"/>
     /// </summary>
-    public class AzureBlobsStorageHelper : IFileStorageHelper
+    public class AzureBlobsStorageHelper
     {
         #region Properties & Fields
 
-        private CloudStorageAccount mStorageAccount = null;
+        private readonly CloudStorageAccount mStorageAccount = null;
 
-        private CloudBlobClient mBlobClient = null;
+        private readonly CloudBlobClient mBlobClient = null;
 
         #endregion
 
@@ -30,7 +32,7 @@ namespace MvcApp.App_Start
         {
             try
             {
-                mStorageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
+                mStorageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["Azure.Storage.ConnectionString"]);
                 mBlobClient = mStorageAccount.CreateCloudBlobClient();
             }
             catch (Exception ex)
@@ -91,56 +93,6 @@ namespace MvcApp.App_Start
 
         #endregion
 
-        #region TempReadToStream
-
-        /// <summary>
-        /// Reads to stream.
-        /// </summary>
-        /// <param name="fileName">Name of the file.</param>
-        /// <param name="containerName">Name of the sub folder.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public Stream TempReadToStream(string fileName, string containerName)
-        {
-            CloudBlobContainer container = mBlobClient.GetContainerReference("folderName");
-
-            container.CreateIfNotExists();
-
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
-
-            Stream fileStream = null;
-            blockBlob.DownloadToStream(fileStream);
-
-            return fileStream;
-        }
-
-        #endregion
-
-        #region TempReadToBytes
-
-        /// <summary>
-        /// Reads to bytes.
-        /// </summary>
-        /// <param name="fileName">Name of the file.</param>
-        /// <param name="containerName">The containerName.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public byte[] TempReadToBytes(string fileName, string containerName)
-        {
-            CloudBlobContainer container = mBlobClient.GetContainerReference("folderName");
-
-            container.CreateIfNotExists();
-
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
-
-            Byte[] fileBytes = null;
-            blockBlob.DownloadToByteArray(fileBytes, 0);
-
-            return fileBytes;
-        }
-
-        #endregion
-
         #region WriteFromStream
 
         /// <summary>
@@ -149,7 +101,7 @@ namespace MvcApp.App_Start
         /// <param name="fileName">Name of the file.</param>
         /// <param name="containerName">The containerName.</param>
         /// <param name="content">The content.</param>
-        public async Task WriteFromStream(string fileName, string containerName, Stream content)
+        public async Task WriteFromStream(string fileName, string containerName, Stream content, string fileId)
         {
             if (content != null)
             {
@@ -158,6 +110,7 @@ namespace MvcApp.App_Start
                 container.CreateIfNotExists();
 
                 CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+                blockBlob.Metadata.Add("fileId", fileId);
 
                 await blockBlob.UploadFromStreamAsync(content);
             }

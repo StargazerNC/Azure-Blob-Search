@@ -49,7 +49,7 @@ namespace MvcApp.Controllers
         public async Task<ActionResult> GetAll()
         {
             AzureSearchHelper helper = new AzureSearchHelper();
-            var resp = await helper.SearchDocuments('*');
+            var resp = await helper.SearchDocuments("*");
             return View("../Home/Index", resp);
         }
 
@@ -68,6 +68,17 @@ namespace MvcApp.Controllers
             AzureSearchHelper helper = new AzureSearchHelper();
             var resp = await helper.SearchDocuments(searchTerms);
             return View("../Home/Index", resp);
+        }
+
+        public async Task<ActionResult> Index(HttpPostedFileBase file)
+        {
+            if (file.ContentLength > 0)
+            {
+                AzureBlobsStorageHelper storage = new AzureBlobsStorageHelper();
+                await storage.WriteFromStream(file.FileName, "coiso", file.InputStream, "file1");
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
