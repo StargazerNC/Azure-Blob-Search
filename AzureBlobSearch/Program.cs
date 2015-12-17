@@ -11,8 +11,8 @@ namespace AzureBlobSearch
     internal class Program
     {
         private const string ConnString = "<connection string>";
-        private const string SearchServiceName = "ncoimbra";
-        private const string ApiKey = "3E79870643E8BAC44C7107F54651FCF7";
+        private const string SearchServiceName = "service name";
+        private const string ApiKey = "key here";
 
         private static void Main(string[] args)
         {
