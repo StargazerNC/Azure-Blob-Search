@@ -69,7 +69,7 @@ namespace MvcApp.App_Start
             {
                 request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             }
-            //mClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            mClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.Add("api-key", mApiKey);
 
             HttpResponseMessage response = await mClient.SendAsync(request);
@@ -159,7 +159,7 @@ namespace MvcApp.App_Start
 
         #endregion
 
-        #region Create an indexer
+        #region Run an indexer
 
         /// <summary>
         /// Creates the indexer.
@@ -227,22 +227,25 @@ namespace MvcApp.App_Start
 
         #endregion
 
-        #region Create an indexer
+        #region Delete Documents
 
         /// <summary>
-        /// Creates the indexer.
+        /// Deletes the documents.
         /// </summary>
+        /// <param name="index">The index.</param>
         /// <param name="requestBody">The request body.</param>
         /// <returns></returns>
-        public async Task<HttpStatusCode> DeleteDocuments(string index, dynamic requestBody)
+        public async Task<HttpStatusCode> DeleteDocuments(string index, string requestBody)
         {
             var uri = new Uri(string.Format("https://{0}.search.windows.net/indexes/{1}/docs/index?api-version=2015-02-28-Preview", mSearchServiceName, index));
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
+            var request = new HttpRequestMessage(HttpMethod.Post, uri);
 
             if (requestBody != null)
             {
-                request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+                //request.Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+                request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
             }
+            mClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.Add("api-key", mApiKey);
 
             HttpResponseMessage response = await mClient.SendAsync(request);

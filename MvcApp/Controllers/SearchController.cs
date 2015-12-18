@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using MvcApp.App_Start;
+using System.Collections.Generic;
 
 namespace MvcApp.Controllers
 {
@@ -101,7 +102,7 @@ namespace MvcApp.Controllers
         {
             AzureSearchHelper helper = new AzureSearchHelper();
 
-            var id = "aAB0AHQAcABzADoALwAvAG4AYwBvAGkAbQBiAHIAYQAuAGIAbABvAGIALgBjAG8AcgBlAC4AdwBpAG4AZABvAHcAcwAuAG4AZQB0AC8AYwBvAGkAcwBvAC8AUgBlAGEAZABtAGUALgBkAG8AYwA1";
+            var id = "2";
 
             var resp = await helper.GetByAzureId(id);
             return View("../Home/Index", resp.Content);
@@ -122,7 +123,7 @@ namespace MvcApp.Controllers
             
             if (file.ContentLength > 0)
             {
-                AzureBlobsStorageHelper storage = new AzureBlobsStorageHelper();
+                var storage = new AzureBlobsStorageHelper();
                 await storage.WriteFromStream(file.FileName, "coiso", file.InputStream, docId.ToString());
             }
             docId+=1;
@@ -131,36 +132,41 @@ namespace MvcApp.Controllers
 
         public async Task<ActionResult> DeleteDocuments()
         {
-            AzureSearchHelper helper = new AzureSearchHelper();
+            var helper = new AzureSearchHelper();
 
-            var docs = await helper.SearchDocuments("*");
+            dynamic docs = await helper.SearchDocuments("*");
 
-            var documents = docs.value;
+            dynamic documents = docs.value;
 
-            //foreach(var doc in documents)
-            //{
-            //    ids.Add(doc.id.ToString());
-            //}
+            var deletePayloads = new List<string>();
 
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine("{");
-            builder.AppendLine("\"value\": [");
+            string payload = string.Empty;
 
             foreach (var doc in documents)
             {
-                builder.AppendLine("{");
-                builder.AppendLine("\"@search.action\": \"delete\",");
-                builder.AppendFormat("\"id\": \"{0}\"", doc.id);
-                builder.AppendLine("},");
-            }
-            string requestBody = builder.ToString();
-            string cleared = requestBody.Replace("\n", "").Replace("\r", "");
-            cleared = cleared.Remove(cleared.Length - 1, 1);
-            cleared += "]";
-            cleared += "}";
+                payload = "\t\t{\r\n";
+                payload += "\t\t\t\"@search.action\": \"delete\",\r\n";
+                payload += string.Format("\t\t\t\"id\": \"{0}\"\r\n", doc.id);
+                payload += "\t\t}";
 
-            await helper.DeleteDocuments("test-index", cleared);
+                deletePayloads.Add(payload);
+            }
+
+            var requestBody = new StringBuilder();
+
+            requestBody.AppendLine("{");
+            requestBody.AppendLine("\t\"value\" : [");
+            
+            string payloads = string.Join(",\r\n", deletePayloads.ToArray());
+
+            requestBody.AppendLine(payloads);
+
+            requestBody.AppendLine("\t]");
+            requestBody.AppendLine("}");
+
+            System.Diagnostics.Debug.WriteLine(requestBody.ToString());
+
+            await helper.DeleteDocuments("test-index", requestBody.ToString());
             
             return View("../Home/Index", docs);
 
